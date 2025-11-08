@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeftIcon, SproutIcon, CloudIcon, TrendingUpIcon, CalendarIcon, MapPinIcon, RefreshCwIcon } from 'lucide-react';
 import { API_BASE_URL } from '../config';
-import { useUser } from '../contexts/UserContext';
 
 interface LocationAnalysis {
   province: string;
@@ -52,14 +51,13 @@ interface ContextAnalysis {
 export function GreenhouseDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useUser();
   const [contextAnalysis, setContextAnalysis] = useState<ContextAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchContextAnalysis = async (refresh: boolean = false) => {
-    if (!id || !user) return;
+    if (!id) return;
     
     try {
       if (refresh) {
@@ -70,8 +68,8 @@ export function GreenhouseDetail() {
       setError(null);
       
       const url = refresh 
-        ? `${API_BASE_URL}/recommendations/${id}/context-analysis?user_id=${user.user_id}&refresh=true`
-        : `${API_BASE_URL}/recommendations/${id}/context-analysis?user_id=${user.user_id}`;
+        ? `${API_BASE_URL}/recommendations/${id}/context-analysis?refresh=true`
+        : `${API_BASE_URL}/recommendations/${id}/context-analysis`;
       
       const response = await fetch(url);
       if (!response.ok) {

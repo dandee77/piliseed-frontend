@@ -17,7 +17,6 @@ import {
   CheckCircleIcon
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
-import { useUser } from '../contexts/UserContext';
 
 interface CropRecommendation {
   crop: string;
@@ -104,7 +103,6 @@ interface CropRecommendation {
 export function CropDetail() {
   const { id, cropIndex } = useParams<{ id: string; cropIndex: string }>();
   const navigate = useNavigate();
-  const { user } = useUser();
   const [crop, setCrop] = useState<CropRecommendation | null>(null);
   const [recommendationId, setRecommendationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,11 +113,11 @@ export function CropDetail() {
   }, [id, cropIndex]);
 
   const fetchCropDetails = async () => {
-    if (!id || cropIndex === undefined || !user) return;
+    if (!id || cropIndex === undefined) return;
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/recommendations/${id}/latest?user_id=${user.user_id}`);
+      const response = await fetch(`${API_BASE_URL}/recommendations/${id}/latest`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch recommendations');

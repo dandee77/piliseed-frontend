@@ -3,32 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeftIcon,
   UserIcon,
-  BellIcon,
   ShieldIcon,
+  BellIcon,
   InfoIcon,
-  LogOutIcon,
   ChevronRightIcon,
-  AlertCircleIcon
+  LogOutIcon,
+  AlertCircleIcon,
 } from 'lucide-react';
-import { useUser } from '../contexts/UserContext';
 
-export function SettingsPage() {
+export default function SettingsPage() {
   const navigate = useNavigate();
-  const { user, logout } = useUser();
 
   const handleBack = () => {
     navigate('/');
   };
 
   const handleLogout = () => {
-    logout();
     navigate('/');
   };
-  
-  if (!user) {
-    navigate('/');
-    return null;
-  }
 
   return (
     <motion.div
@@ -38,32 +30,29 @@ export function SettingsPage() {
       transition={{ duration: 0.3 }}
       className="w-full min-h-screen bg-gray-50"
     >
-      {/* Header */}
       <div className="bg-white px-5 pt-12 pb-6">
         <div className="flex items-center gap-4 mb-6">
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleBack}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
           >
             <ArrowLeftIcon className="w-6 h-6 text-gray-700" />
           </motion.button>
           <h1 className="text-2xl font-bold text-gray-900">Profile & Settings</h1>
         </div>
 
-        {/* Profile Section */}
         <div className="flex items-center gap-4 p-4 bg-green-50 rounded-2xl border border-green-100">
           <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center">
             <UserIcon className="w-8 h-8 text-white" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-gray-900">{user.first_name} {user.last_name}</h2>
-            <p className="text-sm text-gray-600">Prototype User</p>
+            <h2 className="text-xl font-bold text-gray-900">Prototype User</h2>
+            <p className="text-sm text-gray-600">Demo Account</p>
           </div>
         </div>
 
-        {/* Prototype Notice */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -82,9 +71,7 @@ export function SettingsPage() {
         </motion.div>
       </div>
 
-      {/* Settings Sections */}
       <div className="px-5 py-6 space-y-6">
-        {/* Account Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -110,7 +97,6 @@ export function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* Notifications */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,7 +115,6 @@ export function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* About */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,7 +133,6 @@ export function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* Project Info */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -176,7 +160,6 @@ export function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* Logout Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -193,7 +176,6 @@ export function SettingsPage() {
           </motion.button>
         </motion.div>
 
-        {/* Bottom Spacing */}
         <div className="h-24" />
       </div>
     </motion.div>

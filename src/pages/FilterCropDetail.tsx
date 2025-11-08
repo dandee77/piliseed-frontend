@@ -13,8 +13,7 @@ import {
   SunIcon,
   ShieldIcon,
   UsersIcon,
-  BarChart3Icon,
-  CheckCircleIcon
+  BarChart3Icon
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
@@ -100,27 +99,25 @@ interface CropRecommendation {
   reasoning: string;
 }
 
-export function HistoryCropDetail() {
-  const { sessionId, cropIndex } = useParams<{ sessionId: string; cropIndex: string }>();
+export function FilterCropDetail() {
+  const { filterId, cropIndex } = useParams<{ filterId: string; cropIndex: string }>();
   const navigate = useNavigate();
   const [crop, setCrop] = useState<CropRecommendation | null>(null);
-  const [recommendationId, setRecommendationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isTogglingPlanted, setIsTogglingPlanted] = useState(false);
 
   useEffect(() => {
     fetchCropDetails();
-  }, [sessionId, cropIndex]);
+  }, [filterId, cropIndex]);
 
   const fetchCropDetails = async () => {
-    if (!sessionId || cropIndex === undefined) return;
+    if (!filterId || cropIndex === undefined) return;
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/recommendations/session/${sessionId}`);
+      const response = await fetch(`${API_BASE_URL}/recommendations/filter/${filterId}`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch recommendations');
+        throw new Error('Failed to fetch filtered recommendations');
       }
 
       const data = await response.json();
@@ -128,44 +125,19 @@ export function HistoryCropDetail() {
       
       if (data.recommendations && data.recommendations[index]) {
         setCrop(data.recommendations[index]);
-        setRecommendationId(data.id);
       } else {
-        navigate(`/history/${sessionId}`);
+        navigate(`/history/filter/${filterId}`);
       }
     } catch (err) {
       console.error('Error fetching crop details:', err);
-      navigate(`/history/${sessionId}`);
+      navigate(`/history/filter/${filterId}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleTogglePlanted = async () => {
-    if (!recommendationId || cropIndex === undefined || !crop) return;
-
-    try {
-      setIsTogglingPlanted(true);
-      const newPlantedStatus = !crop.planted;
-
-      const response = await fetch(
-        `${API_BASE_URL}/recommendations/${recommendationId}/crops/${cropIndex}/planted?planted=${newPlantedStatus}`,
-        { method: 'PATCH' }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to update planted status');
-      }
-
-      setCrop({ ...crop, planted: newPlantedStatus });
-    } catch (err) {
-      console.error('Error toggling planted status:', err);
-    } finally {
-      setIsTogglingPlanted(false);
-    }
-  };
-
   const handleBack = () => {
-    navigate(`/history/${sessionId}`);
+    navigate(`/history/filter/${filterId}`);
   };
 
   const getScoreColor = (score: number) => {
@@ -608,34 +580,6 @@ export function HistoryCropDetail() {
               </div>
             )}
           </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="fixed bottom-8 left-0 right-0 px-5 max-w-[430px] mx-auto"
-        >
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleTogglePlanted}
-            disabled={isTogglingPlanted}
-            className={`w-full py-4 rounded-xl shadow-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
-              crop.planted
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white hover:bg-gray-50 text-gray-900 border-2 border-green-600'
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            <CheckCircleIcon className={`w-5 h-5 ${crop.planted ? 'text-white' : 'text-green-600'}`} />
-            {isTogglingPlanted ? (
-              'Updating...'
-            ) : crop.planted ? (
-              'Marked as Planted'
-            ) : (
-              'Mark as Planted'
-            )}
-          </motion.button>
         </motion.div>
       </div>
     </div>

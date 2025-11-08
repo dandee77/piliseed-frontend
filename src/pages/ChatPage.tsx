@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SendIcon, BotIcon, UserIcon, Loader2Icon, SproutIcon, AlertCircleIcon, ArrowRightIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
-import { useUser } from '../contexts/UserContext';
 
 interface Sensor {
   sensor_id: string;
@@ -19,7 +18,6 @@ interface Message {
 }
 
 export function ChatPage() {
-  const { user } = useUser();
   const navigate = useNavigate();
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [selectedSensor, setSelectedSensor] = useState<string>('');
@@ -68,7 +66,7 @@ export function ChatPage() {
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !selectedSensor || !user) return;
+    if (!inputMessage.trim() || !selectedSensor) return;
 
     const userMessageId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const userMessage: Message = {
@@ -85,7 +83,7 @@ export function ChatPage() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/recommendations/${selectedSensor}/chat?user_id=${user.user_id}`,
+        `${API_BASE_URL}/recommendations/${selectedSensor}/chat`,
         {
           method: 'POST',
           headers: {
