@@ -4,16 +4,13 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeftIcon,
   SproutIcon,
-  TrendingUpIcon,
-  CalendarIcon,
-  DollarSignIcon,
   AlertTriangleIcon,
   ThermometerIcon,
   DropletIcon,
   SunIcon,
   ShieldIcon,
-  UsersIcon,
   BarChart3Icon,
+  CalendarIcon,
   CheckCircleIcon
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
@@ -180,15 +177,6 @@ export function HistoryCropDetail() {
     if (score >= 0.6) return 'bg-lime-100';
     if (score >= 0.4) return 'bg-yellow-100';
     return 'bg-orange-100';
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
   };
 
   if (isLoading) {
@@ -361,218 +349,6 @@ export function HistoryCropDetail() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-lg p-5"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <UsersIcon className="w-5 h-5 text-lime-600" />
-            <h3 className="font-semibold text-gray-900">Management</h3>
-          </div>
-          <div className="space-y-3">
-            <InfoRow label="Intensity" value={crop.management.management_intensity} />
-            <InfoRow
-              label="Labor Required"
-              value={`${crop.management.labor_hours_per_ha_per_week} hrs/ha/week`}
-            />
-            <div className="flex gap-2 flex-wrap">
-              {crop.management.organic_suitable && (
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                  Organic Suitable
-                </span>
-              )}
-              {crop.management.mechanization_possible && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                  Mechanizable
-                </span>
-              )}
-              {crop.management.requires_irrigation && (
-                <span className="px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-medium rounded-full">
-                  Needs Irrigation
-                </span>
-              )}
-              {crop.management.requires_trellising && (
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                  Needs Trellising
-                </span>
-              )}
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="bg-white rounded-2xl shadow-lg p-5"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <DollarSignIcon className="w-5 h-5 text-lime-600" />
-            <h3 className="font-semibold text-gray-900">Economics</h3>
-          </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-red-50 p-3 rounded-xl">
-                <div className="text-xs text-red-600 mb-1">Total Cost</div>
-                <div className="text-lg font-bold text-red-700">
-                  {formatCurrency(crop.economics.estimated_cost_php)}
-                </div>
-              </div>
-              <div className="bg-green-50 p-3 rounded-xl">
-                <div className="text-xs text-green-600 mb-1">Revenue</div>
-                <div className="text-lg font-bold text-green-700">
-                  {formatCurrency(crop.economics.estimated_revenue_php)}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-green-50 p-4 rounded-xl border border-green-100">
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div>
-                  <div className="text-xs text-gray-600 mb-1">Profit Margin</div>
-                  <div className="text-lg font-bold text-green-700">
-                    {crop.economics.profit_margin_pct.toFixed(1)}%
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-600 mb-1">ROI</div>
-                  <div className="text-lg font-bold text-green-700">
-                    {crop.economics.roi_pct.toFixed(1)}%
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-600 mb-1">Break Even</div>
-                  <div className="text-lg font-bold text-green-700">
-                    {crop.economics.break_even_days}d
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Cost Breakdown</div>
-              <div className="space-y-2">
-                <CostItem label="Seeds" amount={crop.economics.cost_breakdown.seeds_php} />
-                <CostItem label="Fertilizer" amount={crop.economics.cost_breakdown.fertilizer_php} />
-                <CostItem label="Pesticides" amount={crop.economics.cost_breakdown.pesticides_php} />
-                <CostItem label="Labor" amount={crop.economics.cost_breakdown.labor_php} />
-                <CostItem label="Irrigation" amount={crop.economics.cost_breakdown.irrigation_php} />
-                <CostItem label="Others" amount={crop.economics.cost_breakdown.others_php} />
-              </div>
-            </div>
-
-            <InfoRow
-              label="Expected Yield"
-              value={`${crop.economics.estimated_yield_kg_per_ha.toLocaleString()} kg/ha`}
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl shadow-lg p-5"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUpIcon className="w-5 h-5 text-lime-600" />
-            <h3 className="font-semibold text-gray-900">Market Strategy</h3>
-          </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-3 rounded-xl">
-                <div className="text-xs text-blue-600 mb-1">Current Price</div>
-                <div className="text-sm font-bold text-blue-700">
-                  {formatCurrency(crop.market_strategy.current_market_price_php_per_kg)}/kg
-                </div>
-              </div>
-              <div className="bg-green-50 p-3 rounded-xl">
-                <div className="text-xs text-green-600 mb-1">Projected Price</div>
-                <div className="text-sm font-bold text-green-700">
-                  {formatCurrency(crop.market_strategy.projected_harvest_price_php_per_kg)}/kg
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <InfoRow label="Demand" value={crop.market_strategy.demand_level} />
-              <InfoRow label="Volatility" value={crop.market_strategy.price_volatility} />
-            </div>
-
-            {crop.market_strategy.export_potential && (
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-xl">
-                <div className="text-sm font-medium text-purple-700">Export Potential</div>
-              </div>
-            )}
-
-            <div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Best Selling Locations</div>
-              <div className="flex flex-wrap gap-2">
-                {crop.market_strategy.best_selling_locations.map((location, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 bg-lime-100 text-lime-700 text-xs font-medium rounded-full"
-                  >
-                    {location}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Buyer Types</div>
-              <div className="flex flex-wrap gap-2">
-                {crop.market_strategy.buyer_types.map((buyer, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
-                  >
-                    {buyer}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-          className="bg-white rounded-2xl shadow-lg p-5"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <CalendarIcon className="w-5 h-5 text-lime-600" />
-            <h3 className="font-semibold text-gray-900">Planting Schedule</h3>
-          </div>
-          <div className="space-y-3">
-            <InfoRow label="Planting Date" value={crop.planting_schedule.recommended_planting_date} />
-            <InfoRow label="Harvest Date" value={crop.planting_schedule.expected_harvest_date} />
-            {crop.planting_schedule.succession_planting_possible && (
-              <div className="bg-green-50 p-3 rounded-xl">
-                <div className="text-sm font-medium text-green-700">Succession Planting Possible</div>
-              </div>
-            )}
-            {crop.planting_schedule.intercropping_compatible_with.length > 0 && (
-              <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Compatible with</div>
-                <div className="flex flex-wrap gap-2">
-                  {crop.planting_schedule.intercropping_compatible_with.map((cropName, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-lime-100 text-lime-700 text-xs font-medium rounded-full"
-                    >
-                      {cropName}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="bg-white rounded-2xl shadow-lg p-5"
         >
@@ -697,21 +473,6 @@ function ToleranceItem({ label, value }: { label: string; value: string }) {
       <div className="text-xs text-gray-600 mb-1">{label}</div>
       <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getColor(value)}`}>
         {value}
-      </span>
-    </div>
-  );
-}
-
-function CostItem({ label, amount }: { label: string; amount: number }) {
-  return (
-    <div className="flex justify-between items-center text-sm">
-      <span className="text-gray-600">{label}</span>
-      <span className="font-medium text-gray-900">
-        {new Intl.NumberFormat('en-PH', {
-          style: 'currency',
-          currency: 'PHP',
-          minimumFractionDigits: 0,
-        }).format(amount)}
       </span>
     </div>
   );

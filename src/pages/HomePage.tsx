@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GreenhouseCard } from '../components/GreenhouseCard';
-import { SearchIcon, BellIcon } from 'lucide-react';
+import { SearchIcon, BellIcon, XIcon } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
 interface Sensor {
@@ -19,11 +19,15 @@ interface Sensor {
   } | null;
 }
 
+type FilterType = 'all' | 'active' | 'offline';
+
 export function HomePage() {
   const navigate = useNavigate();
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const fetchSensors = async () => {
@@ -87,6 +91,7 @@ export function HomePage() {
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setShowNotification(!showNotification)}
               className="p-2.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors relative"
             >
               <BellIcon className="w-5 h-5 text-white" />
@@ -94,6 +99,35 @@ export function HomePage() {
             </motion.button>
           </div>
         </div>
+
+        {/* Notification Popup */}
+        <AnimatePresence>
+          {showNotification && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="absolute top-20 right-5 bg-white rounded-2xl shadow-2xl p-4 max-w-xs z-50 border-2 border-green-100"
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="flex-1">
+                  <h3 className="font-bold text-green-600 text-sm mb-1">📢 Presentation Notice</h3>
+                  <p className="text-gray-700 text-xs leading-relaxed">
+                    This is a proof of concept demonstration for the DAP Next Gen Competition presentation only.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowNotification(false)}
+                  className="flex-shrink-0 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <XIcon className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
         <motion.h1 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -108,27 +142,42 @@ export function HomePage() {
           transition={{ delay: 0.15 }}
           className="text-white/90 text-sm mb-5"
         >
-          Monitor your farm's environmental conditions
+          Access your farm sensors in one place.
         </motion.p>
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-5 py-2.5 bg-white text-green-600 rounded-full text-sm font-semibold whitespace-nowrap shadow-md"
+            onClick={() => setActiveFilter('all')}
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap shadow-md transition-colors ${
+              activeFilter === 'all'
+                ? 'bg-white text-green-600'
+                : 'bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30'
+            }`}
           >
             All Sensors
           </motion.button>
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium whitespace-nowrap hover:bg-white/30 transition-colors border border-white/30"
+            onClick={() => setActiveFilter('active')}
+            className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              activeFilter === 'active'
+                ? 'bg-white text-green-600 shadow-md'
+                : 'bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30'
+            }`}
           >
             Active
           </motion.button>
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium whitespace-nowrap hover:bg-white/30 transition-colors border border-white/30"
+            onClick={() => setActiveFilter('offline')}
+            className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              activeFilter === 'offline'
+                ? 'bg-white text-green-600 shadow-md'
+                : 'bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30'
+            }`}
           >
             Offline
           </motion.button>
@@ -157,7 +206,26 @@ export function HomePage() {
             <p className="text-sm mt-1">{error}</p>
           </motion.div>
         )}
-        {!loading && !error && sensors.length === 0 && (
+        
+        {/* Offline Filter - Coming Soon Message */}
+        {!loading && !error && activeFilter === 'offline' && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-green-100"
+          >
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">🚧</span>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Coming Soon</h3>
+            <p className="text-gray-600 text-sm">
+              We are currently working to support offline sensor monitoring. This feature will be available soon!
+            </p>
+          </motion.div>
+        )}
+        
+        {/* All Sensors and Active Filter - Show sensors */}
+        {!loading && !error && (activeFilter === 'all' || activeFilter === 'active') && sensors.length === 0 && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -166,7 +234,7 @@ export function HomePage() {
             <p className="text-gray-600">No sensors found. Add a sensor to get started.</p>
           </motion.div>
         )}
-        {!loading && !error && sensors.map(sensor => <GreenhouseCard key={sensor.sensor_id} id={sensor.sensor_id} name={sensor.name} location={sensor.location} description={sensor.description || 'No description available'} image={sensor.image_url || 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80'} temperature={sensor.current_sensors?.temperature_c || 0} humidity={sensor.current_sensors?.humidity_pct || 0} soilMoisture={sensor.current_sensors?.soil_moisture_pct || 0} />)}
+        {!loading && !error && (activeFilter === 'all' || activeFilter === 'active') && sensors.map(sensor => <GreenhouseCard key={sensor.sensor_id} id={sensor.sensor_id} name={sensor.name} location={sensor.location} description={sensor.description || 'No description available'} image={sensor.image_url || 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80'} temperature={sensor.current_sensors?.temperature_c || 0} humidity={sensor.current_sensors?.humidity_pct || 0} soilMoisture={sensor.current_sensors?.soil_moisture_pct || 0} />)}
       </div>
     </motion.div>;
 }

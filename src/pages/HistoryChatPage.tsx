@@ -154,13 +154,13 @@ export function HistoryChatPage() {
               <span className="text-white/90 text-xs font-medium">Session Data</span>
             </div>
             <p className="text-white text-sm">
-              {sessionInfo.input?.location || 'Unknown Location'} • {sessionInfo.recommendations?.length || 0} crops
+              {sessionInfo.location || 'Unknown Location'} • {sessionInfo.recommendations?.length || 0} crops
             </p>
           </div>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-5 py-6 pb-32 space-y-4">
         {messages.length === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

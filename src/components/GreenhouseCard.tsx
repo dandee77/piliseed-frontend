@@ -21,7 +21,7 @@ export function GreenhouseCard({
 }: GreenhouseCardProps) {
   const navigate = useNavigate();
   
-  return <div onClick={() => navigate(`/greenhouse/${id}`)} className="relative rounded-3xl overflow-hidden h-64 shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
+  return <div onClick={() => navigate(`/sensor/${id}/history`)} className="relative rounded-3xl overflow-hidden h-64 shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
       <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70" />
       <div className="relative h-full flex flex-col justify-between p-6">
